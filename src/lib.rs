@@ -1,14 +1,16 @@
 pub mod aoc {
+    use itertools::Itertools;
+
     pub fn advent_one() {
         let input = include_str!("../puzzle-input-01.txt");
         let mut elf_totals = input.lines().fold(vec![], |mut elves, new_value| {
-            if elves.len() == 0 {
+            if elves.is_empty() {
                 elves.push(new_value.parse().expect("First value wasn't a u32"));
-            } else if new_value == "" {
+            } else if new_value.is_empty() {
                 elves.push(0)
             } else {
                 let last = elves.last_mut().expect("no 'last element' to access");
-                *last = *last + new_value.parse::<u32>().expect("Value wasn't a u32");
+                *last += new_value.parse::<u32>().expect("Value wasn't a u32");
             }
             elves
         });
@@ -29,12 +31,12 @@ pub mod aoc {
             .lines()
             .map(|value| match value {
                 "A X" => 1 + 3,
-                "B X" => 1 + 0,
+                "B X" => 1,
                 "C X" => 1 + 6,
                 "A Y" => 2 + 6,
                 "B Y" => 2 + 3,
-                "C Y" => 2 + 0,
-                "A Z" => 3 + 0,
+                "C Y" => 2,
+                "A Z" => 3,
                 "B Z" => 3 + 6,
                 "C Z" => 3 + 3,
                 _ => panic!("Unrecorgnised Value: {}", value),
@@ -44,9 +46,9 @@ pub mod aoc {
         let part_2 = input
             .lines()
             .map(|value| match value {
-                "A X" => 3 + 0,
-                "B X" => 1 + 0,
-                "C X" => 2 + 0,
+                "A X" => 3,
+                "B X" => 1,
+                "C X" => 2,
                 "A Y" => 1 + 3,
                 "B Y" => 2 + 3,
                 "C Y" => 3 + 3,
@@ -81,11 +83,39 @@ pub mod aoc {
                         .position(|p| p == c)
                         .expect("Found a non-alphabetical match")
                 } else {
-                    0 as usize
+                    0_usize
+                }
+            })
+            .sum();
+
+        let part_2: usize = input
+            .lines()
+            .batching(|it| {
+                // if only let chains were a thing in stable...
+                if let Some(l) = it.next() {
+                    if let Some(m) = it.next() {
+                        it.next().map(|n| (l, m, n))
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            })
+            .map(|(a, b, c)| {
+                let common_char = a.chars().find(|l| b.contains(*l) && c.contains(*l));
+                if let Some(c) = common_char {
+                    index
+                        .chars()
+                        .position(|p| p == c)
+                        .expect("Found a non alphabetical match")
+                } else {
+                    0_usize
                 }
             })
             .sum();
 
         println!("{}", part_1);
+        println!("{}", part_2);
     }
 }
