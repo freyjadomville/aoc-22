@@ -60,4 +60,32 @@ pub mod aoc {
         println!("{}", part_1);
         println!("{}", part_2);
     }
+
+    pub fn advent_three() {
+        let input = include_str!("../puzzle-input-03.txt");
+
+        let index = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        let part_1: usize = input
+            .lines()
+            .map(|line| {
+                // Safe due to ASCII input
+                let first_half = &line[..line.len() / 2];
+                let second_half = &line[line.len() / 2..];
+
+                let common_char = first_half.chars().find(|c| second_half.contains(*c));
+
+                if let Some(c) = common_char {
+                    index
+                        .chars()
+                        .position(|p| p == c)
+                        .expect("Found a non-alphabetical match")
+                } else {
+                    0 as usize
+                }
+            })
+            .sum();
+
+        println!("{}", part_1);
+    }
 }
