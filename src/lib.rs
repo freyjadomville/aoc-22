@@ -125,11 +125,11 @@ pub mod aoc {
 
     pub fn advent_four() {
         let input = include_str!("../puzzle-input-04.txt");
+        let regex = Regex::new(r"(\d+)-(\d+),(\d+)-(\d+)").expect("regex is not valid");
 
         let set_pairs = input
             .lines()
             .map(|line| {
-                let regex = Regex::new(r"(\d+)-(\d+),(\d+)-(\d+)").expect("regex is not valid");
                 let captures = regex.captures(line).expect("No matches found for regex");
                 let x1 = captures[1].parse::<u32>().expect("capture parse failed");
                 let x2 = captures[2].parse::<u32>().expect("capture parse failed");
